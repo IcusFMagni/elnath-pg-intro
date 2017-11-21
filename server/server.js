@@ -40,6 +40,27 @@ app.get('/shoes', function (req, res) {
     })
 })
 
+app.post('/shoes', function(req, res) {
+    pool.connect(function(errorConnectingToDatabase,client,done){
+        if(errorConnectingToDatabase) {
+            res.sendStatus(500)
+        } else {
+            client.query(`INSERT INTO shoes (name, cost)
+            VALUES ($1, $2)`,[req.body.name, req.body.cost], function (errorMakingQuery,result) {
+                done();
+                if(errorMakingQuery){
+                    console.log('query failed', errorMakingQuery)
+                    res.sendStatus(500)
+                } else {
+                    res.sendStatus(201)
+                }
+            }
+        
+        )
+        }
+    })
+})
+
 app.listen(port, function(){
     console.log('listening on port:', port)
 })
